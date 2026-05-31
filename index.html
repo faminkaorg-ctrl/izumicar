@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IZUMI CAR | Премиальный импорт автомобилей</title>
+    <title>IZUME CAR | Премиальный импорт автомобилей</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* --- Базовые настройки и скрытие скроллбара --- */
@@ -23,6 +23,34 @@
         header { position: relative; width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
         .hero-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; object-fit: cover; object-position: center; }
         .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.9) 100%); z-index: -1; }
+        
+        /* --- Кнопка управления звуком видео --- */
+        .sound-toggle {
+            position: absolute;
+            bottom: 40px;
+            left: 50px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: #fff;
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 20;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+            font-size: 16px;
+        }
+        .sound-toggle:hover {
+            background: rgba(255, 255, 255, 0.15);
+            border-color: #0078d4;
+            transform: scale(1.1);
+            box-shadow: 0 0 15px rgba(0, 120, 212, 0.3);
+        }
+
         nav { display: flex; justify-content: space-between; align-items: center; padding: 30px 50px; z-index: 10; }
         .logo { font-size: 26px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; }
         .owners { font-size: 14px; letter-spacing: 1px; color: rgba(255, 255, 255, 0.6); }
@@ -417,6 +445,7 @@
             .brand-panel { height: 250px; flex: none !important; }
             .brand-panel:hover { height: 300px; }
             nav { padding: 20px; flex-direction: column; gap: 10px; }
+            .sound-toggle { bottom: 20px; left: 20px; width: 40px; height: 40px; font-size: 14px; }
             .cookie-banner { flex-direction: column; text-align: center; }
             .team-grid { flex-direction: column; align-items: center; }
             .team-card { width: 100%; max-width: 350px; }
@@ -431,10 +460,14 @@
 <body>
 
     <header>
-        <img class="hero-background" src="main.jpeg" alt="IZUMI CAR Main" onerror="this.src='https://placehold.co/1920x1080/111/333?text=BACKGROUND'">
+        <!-- Заменили картинку на видео -->
+        <video class="hero-background" id="heroVideo" autoplay loop muted playsinline poster="main.jpeg">
+            <source src="company.mp4" type="video/mp4">
+        </video>
         <div class="video-overlay"></div>
+        
         <nav>
-            <div class="logo reveal">IZUMI CAR</div>
+            <div class="logo reveal">IZUME CAR</div>
             <div class="owners reveal" style="transition-delay: 0.1s;">Основатели: Михаил & Татьяна</div>
         </nav>
         <div class="hero-content">
@@ -445,7 +478,11 @@
                 <button class="btn btn-secondary" onclick="document.getElementById('faqSection').scrollIntoView({behavior: 'smooth'});">Остались вопросы?</button>
             </div>
         </div>
-        <div></div>
+        
+        <!-- Кнопка включения звука -->
+        <button class="sound-toggle reveal" style="transition-delay: 0.5s;" onclick="toggleSound()" id="soundToggleBtn" title="Включить звук">
+            <i class="fa-solid fa-volume-xmark"></i>
+        </button>
     </header>
 
     <section class="selection-section reveal" id="catalog">
@@ -845,7 +882,7 @@
     <footer>
         <div class="footer-grid">
             <div class="footer-col reveal">
-                <div class="logo" style="font-size: 20px; margin-bottom: 15px;">IZUMI CAR</div>
+                <div class="logo" style="font-size: 20px; margin-bottom: 15px;">IZUME CAR</div>
                 <p>Эксклюзивный импорт автомобилей из Южной Кореи, Японии и Китая. Полный цикл логистики и юридического оформления.</p>
                 <p style="margin-top: 15px;"><strong>Ежедневно с 9:00 до 20:00</strong></p>
             </div>
@@ -877,7 +914,7 @@
             </div>
         </div>
         <div class="footer-bottom reveal" style="transition-delay: 0.4s;">
-            © 2026 IZUMI CAR. Все права защищены. Информация на сайте не является публичной офертой.
+            © 2026 IZUME CAR. Все права защищены. Информация на сайте не является публичной офертой.
         </div>
     </footer>
 
@@ -1005,6 +1042,22 @@
             document.querySelectorAll('.catalog-container').forEach(cat => cat.classList.remove('active-catalog'));
             const activeCatalog = document.getElementById('catalog-' + countryId);
             if (activeCatalog) activeCatalog.classList.add('active-catalog');
+        }
+
+        // Управление звуком фонового видео
+        function toggleSound() {
+            const video = document.getElementById('heroVideo');
+            const btnIcon = document.querySelector('#soundToggleBtn i');
+            
+            if (video.muted) {
+                video.muted = false;
+                btnIcon.classList.remove('fa-volume-xmark');
+                btnIcon.classList.add('fa-volume-high');
+            } else {
+                video.muted = true;
+                btnIcon.classList.remove('fa-volume-high');
+                btnIcon.classList.add('fa-volume-xmark');
+            }
         }
 
         // Логика кнопки "У меня есть вопросы"
