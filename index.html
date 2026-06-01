@@ -2,16 +2,21 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>IZUME CAR | Премиальный импорт автомобилей</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* --- Базовые настройки и скрытие скроллбара --- */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
+        *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, sans-serif; }
         
-        body { 
-            background-color: #0a0a0a; color: #ffffff; overflow-x: hidden; line-height: 1.6;
+        html, body { 
+            background-color: #0a0a0a; 
+            color: #ffffff; 
+            overflow-x: hidden !important; /* ЖЕСТКИЙ ЗАПРЕТ ГОРИЗОНТАЛЬНОГО СКРОЛЛА */
+            width: 100%;
+            line-height: 1.6;
             -ms-overflow-style: none; scrollbar-width: none; 
+            -webkit-tap-highlight-color: transparent; /* Убирает синий квадрат при клике на мобилках */
         }
         body::-webkit-scrollbar { display: none; }
 
@@ -19,21 +24,21 @@
         .reveal { opacity: 0; transform: translateY(40px); transition: all 0.8s cubic-bezier(0.5, 0, 0, 1); }
         .reveal.active { opacity: 1; transform: translateY(0); }
 
-        /* --- Шапка --- */
-        header { position: relative; width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
+        /* --- Шапка и Видео --- */
+        header { position: relative; width: 100%; height: 100vh; height: 100svh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
         .hero-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; object-fit: cover; object-position: center; }
-        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.9) 100%); z-index: -1; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.3) 50%, rgba(0,0,0,0.95) 100%); z-index: -1; }
         
         /* --- Кнопка управления звуком видео --- */
         .sound-toggle {
             position: absolute;
             bottom: 40px;
-            left: 50px;
-            background: rgba(255, 255, 255, 0.05);
+            right: 50px; /* Перенесли направо для удобства */
+            background: rgba(255, 255, 255, 0.1);
             border: 1px solid rgba(255, 255, 255, 0.2);
             color: #fff;
-            width: 48px;
-            height: 48px;
+            width: 50px;
+            height: 50px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
@@ -42,73 +47,69 @@
             z-index: 20;
             transition: all 0.3s ease;
             backdrop-filter: blur(5px);
-            font-size: 16px;
+            font-size: 18px;
         }
-        .sound-toggle:hover {
-            background: rgba(255, 255, 255, 0.15);
-            border-color: #0078d4;
-            transform: scale(1.1);
-            box-shadow: 0 0 15px rgba(0, 120, 212, 0.3);
-        }
+        .sound-toggle:hover { background: rgba(255, 255, 255, 0.2); border-color: #0078d4; transform: scale(1.1); box-shadow: 0 0 15px rgba(0, 120, 212, 0.4); }
 
         nav { display: flex; justify-content: space-between; align-items: center; padding: 30px 50px; z-index: 10; }
         .logo { font-size: 26px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; }
         .owners { font-size: 14px; letter-spacing: 1px; color: rgba(255, 255, 255, 0.6); }
+        
         .hero-content { padding: 0 50px 100px 50px; max-width: 900px; z-index: 10; }
         .hero-content h1 { font-size: 52px; font-weight: 300; margin-bottom: 20px; line-height: 1.1; text-transform: uppercase; letter-spacing: 1px; }
         .hero-content p { font-size: 18px; color: rgba(255, 255, 255, 0.85); margin-bottom: 40px; max-width: 700px; }
         
-        .cta-buttons { display: flex; gap: 20px; }
-        .btn { padding: 16px 40px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border: none; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; }
+        .cta-buttons { display: flex; gap: 20px; flex-wrap: wrap; }
+        .btn { padding: 16px 40px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.5px; border: none; cursor: pointer; transition: all 0.3s ease; border-radius: 4px; text-align: center; }
         .btn-primary { background-color: #0078d4; color: white; }
         .btn-primary:hover { background-color: #005a9e; transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,120,212,0.3); }
         .btn-secondary { background-color: transparent; color: white; border: 1px solid white; }
         .btn-secondary:hover { background-color: white; color: black; transform: translateY(-3px); }
 
         /* --- Секция выбора --- */
-        .selection-section { padding: 100px 50px; text-align: center; background: #0a0a0a; }
+        .selection-section { padding: 100px 50px; text-align: center; background: #0a0a0a; width: 100%; }
         .section-title { font-size: 36px; font-weight: 300; margin-bottom: 15px; letter-spacing: 2px; text-transform: uppercase; }
-        .section-subtitle { color: #888; margin-bottom: 60px; font-size: 16px; }
+        .section-subtitle { color: #888; margin-bottom: 50px; font-size: 16px; }
         
-        .flags-container { display: flex; justify-content: center; gap: 30px; margin-bottom: 60px; }
-        .flag-wrapper { display: flex; flex-direction: column; align-items: center; }
-        .flag-card { cursor: pointer; width: 160px; height: 100px; border-radius: 4px; overflow: hidden; border: 2px solid #333; transition: all 0.4s ease; }
+        .flags-container { display: flex; justify-content: center; gap: 20px; margin-bottom: 60px; flex-wrap: wrap; }
+        .flag-wrapper { display: flex; flex-direction: column; align-items: center; width: calc(33.33% - 20px); min-width: 120px; max-width: 180px; }
+        .flag-card { cursor: pointer; width: 100%; aspect-ratio: 16/10; border-radius: 6px; overflow: hidden; border: 2px solid #333; transition: all 0.4s ease; }
         .flag-card img { width: 100%; height: 100%; object-fit: cover; filter: grayscale(60%); transition: all 0.5s ease; }
         .flag-card:hover img, .flag-card.active img { filter: grayscale(0%); transform: scale(1.05); }
         .flag-card.active { border-color: #0078d4; box-shadow: 0 0 20px rgba(0, 120, 212, 0.4); }
-        .flag-label { margin-top: 15px; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; color: #666; transition: color 0.3s; }
+        .flag-label { margin-top: 15px; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; color: #666; transition: color 0.3s; text-align: center; }
         .flag-wrapper:hover .flag-label, .flag-wrapper.active .flag-label { color: #fff; font-weight: bold; }
 
-        /* --- Каталог --- */
+        /* --- Каталог (Десктоп) --- */
         .catalog-container { width: 100%; height: 500px; display: none; border-radius: 12px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
         .catalog-container.active-catalog { display: flex; animation: fadeIn 0.6s ease; }
         .brand-panel { position: relative; flex: 1; height: 100%; overflow: hidden; cursor: pointer; transition: flex 0.7s cubic-bezier(0.25, 1, 0.5, 1); display: flex; flex-direction: column; justify-content: flex-end; padding: 40px; border-right: 1px solid rgba(255,255,255,0.1); text-align: left; background: #000; }
         .brand-panel:last-child { border-right: none; }
         
-        .brand-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; transition: all 0.8s ease; filter: brightness(0.35); }
+        .brand-bg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; transition: all 0.8s ease; filter: brightness(0.4); }
         .brand-panel:hover .brand-bg { transform: scale(1.05); filter: brightness(0.6); }
         .brand-panel:hover { flex: 2.5; }
         
         .brand-content { position: relative; z-index: 5; }
-        .brand-name { font-size: 40px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+        .brand-name { font-size: 40px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; margin-bottom: 10px; color: #fff; text-shadow: 0 2px 10px rgba(0,0,0,0.8); }
         .brand-description { font-size: 15px; color: rgba(255,255,255,0); max-height: 0; transform: translateY(20px); transition: all 0.5s ease; max-width: 450px; }
-        .brand-panel:hover .brand-description { color: rgba(255,255,255,0.9); max-height: 200px; transform: translateY(0); margin-bottom: 25px; text-shadow: 0 1px 5px rgba(0,0,0,0.5); }
+        .brand-panel:hover .brand-description { color: rgba(255,255,255,0.95); max-height: 200px; transform: translateY(0); margin-bottom: 25px; text-shadow: 0 1px 5px rgba(0,0,0,0.8); }
         .brand-btn { display: inline-block; opacity: 0; padding: 12px 24px; background: #0078d4; color: #fff; border: none; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; border-radius: 4px; transition: all 0.3s ease 0.2s; transform: translateY(10px); cursor: pointer;}
         .brand-panel:hover .brand-btn { opacity: 1; transform: translateY(0); }
         .brand-btn:hover { background: #005a9e; }
 
         /* --- Преимущества --- */
-        .advantages-section { padding: 100px 50px; background: #0f0f0f; border-top: 1px solid #1a1a1a; }
-        .adv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 40px; max-width: 1400px; margin: 0 auto; }
-        .adv-card { background: #141414; padding: 40px; border-radius: 8px; border: 1px solid #222; transition: all 0.3s ease; position: relative; overflow: hidden; }
+        .advantages-section { padding: 100px 50px; background: #0f0f0f; border-top: 1px solid #1a1a1a; width: 100%; }
+        .adv-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 30px; max-width: 1400px; margin: 0 auto; }
+        .adv-card { background: #141414; padding: 40px 30px; border-radius: 8px; border: 1px solid #222; transition: all 0.3s ease; position: relative; overflow: hidden; }
         .adv-card:hover { transform: translateY(-5px); border-color: #0078d4; box-shadow: 0 15px 30px rgba(0,120,212,0.1); }
-        .adv-icon { font-size: 38px; color: #0078d4; margin-bottom: 25px; display: inline-block; }
+        .adv-icon { font-size: 38px; color: #0078d4; margin-bottom: 20px; display: inline-block; }
         .adv-title { font-size: 20px; font-weight: 600; margin-bottom: 15px; letter-spacing: 1px; color: #fff; }
         .adv-desc { font-size: 14px; color: #999; line-height: 1.6; }
 
         /* --- Этапы --- */
-        .process-section { padding: 100px 50px; background: #0a0a0a; }
-        .process-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 30px; max-width: 1400px; margin: 0 auto; }
+        .process-section { padding: 100px 50px; background: #0a0a0a; width: 100%; }
+        .process-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1400px; margin: 0 auto; }
         .process-step { position: relative; padding: 40px 30px 40px 90px; background: linear-gradient(135deg, #111 0%, #0a0a0a 100%); border: 1px solid #222; border-left: 3px solid #333; border-radius: 6px; transition: all 0.3s ease; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between; min-height: 200px; }
         .process-step:hover { border-color: #444; border-left-color: #0078d4; box-shadow: 0 10px 25px rgba(0,0,0,0.5); transform: translateY(-5px); }
         .step-number { position: absolute; left: 20px; top: 30px; font-size: 50px; font-weight: 900; color: rgba(255,255,255,0.05); transition: all 0.3s; font-family: 'Arial Black', sans-serif; line-height: 1; }
@@ -121,12 +122,12 @@
         .step-modal-content-data { display: none; } 
 
         /* --- Команда --- */
-        .team-section { padding: 100px 50px; background: #0f0f0f; border-top: 1px solid #1a1a1a; text-align: center; }
+        .team-section { padding: 100px 50px; background: #0f0f0f; border-top: 1px solid #1a1a1a; text-align: center; width: 100%; }
         .team-grid { display: flex; justify-content: center; gap: 40px; max-width: 1000px; margin: 0 auto; flex-wrap: wrap; }
         
         .team-card { background: #141414; border: 1px solid #222; border-radius: 12px; padding: 20px; width: 320px; text-align: left; transition: all 0.3s ease; display: flex; flex-direction: column; }
         .team-card:hover { border-color: #333; transform: translateY(-5px); box-shadow: 0 15px 30px rgba(0,0,0,0.4); }
-        .team-photo-wrapper { width: 100%; height: 320px; border-radius: 8px; overflow: hidden; margin-bottom: 20px; position: relative; background: #1a1a1a; }
+        .team-photo-wrapper { width: 100%; aspect-ratio: 4/5; border-radius: 8px; overflow: hidden; margin-bottom: 20px; position: relative; background: #1a1a1a; }
         .team-photo-wrapper img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; }
         .team-card:hover .team-photo-wrapper img { transform: scale(1.05); }
         .team-name { font-size: 20px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
@@ -134,292 +135,45 @@
         .team-btn { background: #0078d4; color: #fff; border: none; padding: 14px 20px; border-radius: 6px; font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; cursor: pointer; transition: all 0.3s ease; display: flex; justify-content: center; align-items: center; gap: 10px; text-decoration: none; margin-top: auto; }
         .team-btn:hover { background: #005a9e; }
 
-        /* --- FAQ (Аккордеон) --- */
-        .faq-section { padding: 100px 50px; background: #0a0a0a; border-top: 1px solid #1a1a1a; text-align: center; }
-        
-        /* Кнопка открытия FAQ */
-        .faq-main-btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            background: transparent;
-            border: 1px solid #0078d4;
-            color: #fff;
-            padding: 20px 60px;
-            border-radius: 50px;
-            font-size: 20px;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            box-shadow: 0 0 20px rgba(0, 120, 212, 0.15);
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .faq-main-btn::before {
-            content: '';
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: rgba(0, 120, 212, 0.1);
-            z-index: -1;
-            transition: all 0.4s ease;
-            transform: scaleY(0);
-            transform-origin: bottom;
-        }
-
+        /* --- FAQ --- */
+        .faq-section { padding: 100px 50px; background: #0a0a0a; border-top: 1px solid #1a1a1a; text-align: center; width: 100%; }
+        .faq-main-btn { display: inline-flex; align-items: center; justify-content: center; gap: 15px; background: transparent; border: 1px solid #0078d4; color: #fff; padding: 20px 60px; border-radius: 50px; font-size: 20px; font-weight: 800; text-transform: uppercase; letter-spacing: 2px; cursor: pointer; transition: all 0.4s ease; box-shadow: 0 0 20px rgba(0, 120, 212, 0.15); position: relative; overflow: hidden; z-index: 1; }
+        .faq-main-btn::before { content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 120, 212, 0.1); z-index: -1; transition: all 0.4s ease; transform: scaleY(0); transform-origin: bottom; }
         .faq-main-btn:hover { border-color: #005a9e; box-shadow: 0 0 30px rgba(0, 120, 212, 0.4); transform: translateY(-2px); }
         .faq-main-btn:hover::before { transform: scaleY(1); }
         .faq-main-btn i { font-size: 24px; color: #0078d4; transition: transform 0.4s ease; }
         .faq-main-btn.opened i { transform: scale(1.2) rotate(15deg); }
 
-        /* Контейнер списка FAQ */
-        .faq-list-wrapper {
-            display: grid;
-            grid-template-rows: 0fr;
-            transition: grid-template-rows 0.6s cubic-bezier(0.4, 0, 0.2, 1);
-            max-width: 900px;
-            margin: 0 auto;
-            text-align: left;
-        }
-
-        .faq-list-wrapper.expanded {
-            grid-template-rows: 1fr;
-            margin-top: 50px;
-        }
-
+        .faq-list-wrapper { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.6s cubic-bezier(0.4, 0, 0.2, 1); max-width: 900px; margin: 0 auto; text-align: left; }
+        .faq-list-wrapper.expanded { grid-template-rows: 1fr; margin-top: 50px; }
         .faq-container { overflow: hidden; display: flex; flex-direction: column; gap: 15px; }
         
-        /* Карточка вопроса (Анимированная) */
-        .faq-item {
-            background: #111;
-            border: 1px solid #222;
-            border-radius: 12px;
-            overflow: hidden;
-            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
-            transform-origin: center;
-        }
-        
+        .faq-item { background: #111; border: 1px solid #222; border-radius: 12px; overflow: hidden; transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1); transform-origin: center; }
         .faq-item:hover { border-color: #333; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-        .faq-item.active { 
-            border-color: #0078d4; 
-            background: #131313; 
-            box-shadow: 0 10px 30px rgba(0, 120, 212, 0.15);
-            transform: scale(1.02); /* Попап эффект */
-            z-index: 10;
-            position: relative;
-        }
+        .faq-item.active { border-color: #0078d4; background: #131313; box-shadow: 0 10px 30px rgba(0, 120, 212, 0.15); transform: scale(1.02); z-index: 10; position: relative; }
         
-        .faq-question {
-            width: 100%; display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 25px; background: none; border: none; color: #fff;
-            font-size: 16px; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.3s ease;
-        }
-
-        /* Эффект при наведении на текст вопроса */
+        .faq-question { width: 100%; display: flex; justify-content: space-between; align-items: center; padding: 20px 25px; background: none; border: none; color: #fff; font-size: 16px; font-weight: 600; text-align: left; cursor: pointer; transition: all 0.3s ease; }
         .faq-question:hover .faq-q-left { transform: translateX(5px); }
         .faq-q-left { display: flex; align-items: center; gap: 20px; transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
-        
-        .faq-item-icon {
-            width: 40px; height: 40px; background: rgba(0, 120, 212, 0.05);
-            border: 1px solid rgba(0, 120, 212, 0.2); border-radius: 8px;
-            display: flex; justify-content: center; align-items: center; color: #0078d4; flex-shrink: 0;
-            transition: all 0.4s ease;
-        }
-
-        /* Иконка светится при активном вопросе */
-        .faq-item.active .faq-item-icon {
-            background: #0078d4;
-            color: #fff;
-            box-shadow: 0 0 15px rgba(0, 120, 212, 0.4);
-            transform: rotate(5deg) scale(1.05);
-        }
-        
+        .faq-item-icon { width: 40px; height: 40px; background: rgba(0, 120, 212, 0.05); border: 1px solid rgba(0, 120, 212, 0.2); border-radius: 8px; display: flex; justify-content: center; align-items: center; color: #0078d4; flex-shrink: 0; transition: all 0.4s ease; }
+        .faq-item.active .faq-item-icon { background: #0078d4; color: #fff; box-shadow: 0 0 15px rgba(0, 120, 212, 0.4); transform: rotate(5deg) scale(1.05); }
         .faq-chevron { font-size: 14px; color: #555; transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), color 0.3s; }
         .faq-item.active .faq-chevron { transform: rotate(180deg); color: #0078d4; }
         
-        /* ИСПРАВЛЕННЫЙ CSS ДЛЯ ОТВЕТОВ С КРАСИВОЙ ТИПОГРАФИКОЙ */
-        .faq-answer { 
-            display: grid; 
-            grid-template-rows: 0fr; 
-            transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1); 
-        }
-        
+        .faq-answer { display: grid; grid-template-rows: 0fr; transition: grid-template-rows 0.5s cubic-bezier(0.4, 0, 0.2, 1); }
         .faq-item.active .faq-answer { grid-template-rows: 1fr; }
-
         .faq-answer-inner { overflow: hidden; }
-        
-        .faq-answer-text { 
-            padding: 0 25px 25px 85px; 
-            border-top: 1px solid transparent;
-            display: flex;
-            gap: 15px;
-            align-items: flex-start;
-        }
-        
-        .faq-item.active .faq-answer-text { 
-            border-top-color: rgba(255, 255, 255, 0.05); 
-            padding-top: 25px;
-        }
+        .faq-answer-text { padding: 0 25px 25px 85px; border-top: 1px solid transparent; display: flex; gap: 15px; align-items: flex-start; }
+        .faq-item.active .faq-answer-text { border-top-color: rgba(255, 255, 255, 0.05); padding-top: 25px; }
+        .faq-answer-text p { color: #999; font-size: 15px; font-weight: 300; letter-spacing: 0.5px; line-height: 1.8; margin: 0; opacity: 0; transform: translateY(-10px); transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s; }
+        .faq-answer-text p strong { color: #fff; font-weight: 500; border-bottom: 1px solid rgba(0, 120, 212, 0.4); padding-bottom: 1px; transition: all 0.3s; }
+        .faq-item.active .faq-answer-text p strong:hover { border-bottom-color: #0078d4; text-shadow: 0 0 8px rgba(0, 120, 212, 0.3); }
+        .faq-item.active .faq-answer-text p { color: #d8d8d8; opacity: 1; transform: translateY(0); }
+        .faq-answer-decor { color: rgba(0, 120, 212, 0.5); font-size: 18px; margin-top: 4px; opacity: 0; transform: scale(0.5) rotate(-45deg) translateX(-20px); transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s; }
+        .faq-item.active .faq-answer-decor { opacity: 1; transform: scale(1) rotate(0deg) translateX(0); color: #0078d4; text-shadow: 0 0 12px rgba(0, 120, 212, 0.6); }
 
-        /* Красивые буквы (Типографика) */
-        .faq-answer-text p {
-            color: #999;
-            font-size: 15px;
-            font-weight: 300; /* Тонкий, премиальный шрифт */
-            letter-spacing: 0.5px;
-            line-height: 1.8;
-            margin: 0;
-            opacity: 0;
-            transform: translateY(-10px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.1s;
-        }
-
-        /* Выделение ключевых слов в ответах */
-        .faq-answer-text p strong {
-            color: #fff;
-            font-weight: 500;
-            border-bottom: 1px solid rgba(0, 120, 212, 0.4);
-            padding-bottom: 1px;
-            transition: all 0.3s;
-        }
-        
-        .faq-item.active .faq-answer-text p strong:hover {
-            border-bottom-color: #0078d4;
-            text-shadow: 0 0 8px rgba(0, 120, 212, 0.3);
-        }
-
-        .faq-item.active .faq-answer-text p {
-            color: #d8d8d8;
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Декоративная иконка внутри ответа */
-        .faq-answer-decor {
-            color: rgba(0, 120, 212, 0.5);
-            font-size: 18px;
-            margin-top: 4px;
-            opacity: 0;
-            transform: scale(0.5) rotate(-45deg) translateX(-20px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.2s;
-        }
-
-        .faq-item.active .faq-answer-decor {
-            opacity: 1;
-            transform: scale(1) rotate(0deg) translateX(0);
-            color: #0078d4;
-            text-shadow: 0 0 12px rgba(0, 120, 212, 0.6);
-        }
-
-        /* --- КВИЗ ВОРОНКА (QUIZ OVERLAY) --- */
-        .quiz-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95); backdrop-filter: blur(10px);
-            z-index: 10000; display: flex; justify-content: center; align-items: flex-start;
-            overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 0.5s ease;
-            padding: 40px 20px;
-        }
-        .quiz-overlay.active { opacity: 1; pointer-events: all; }
-        
-        .quiz-container {
-            background: #111; border: 1px solid #333; border-top: 4px solid #0078d4;
-            border-radius: 12px; width: 100%; max-width: 1100px;
-            padding: 40px; position: relative;
-            transform: translateY(30px); transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-            box-shadow: 0 30px 60px rgba(0,0,0,0.8); margin: auto;
-        }
-        .quiz-overlay.active .quiz-container { transform: translateY(0); }
-        
-        .quiz-close {
-            position: absolute; top: 20px; right: 20px; font-size: 28px; color: #666;
-            cursor: pointer; transition: color 0.3s; background: none; border: none;
-        }
-        .quiz-close:hover { color: #fff; }
-
-        .quiz-step { display: none; animation: fadeIn 0.5s ease; }
-        .quiz-step.active-step { display: block; }
-        
-        .quiz-header { text-align: center; margin-bottom: 40px; }
-        .quiz-title { font-size: 28px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #fff; margin-bottom: 10px; }
-        .quiz-subtitle { font-size: 15px; color: #888; }
-
-        /* Сетка моделей (Шаг 1) */
-        .models-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
-        .model-card {
-            background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; overflow: hidden;
-            cursor: pointer; transition: all 0.3s ease; position: relative;
-        }
-        .model-card:hover { border-color: #0078d4; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,120,212,0.15); }
-        .model-img-box { width: 100%; height: 140px; background: #0a0a0a; overflow: hidden; }
-        .model-img-box img { width: 100%; height: 100%; object-fit: cover; transition: transform 0.5s ease; filter: brightness(0.8); }
-        .model-card:hover .model-img-box img { transform: scale(1.08); filter: brightness(1); }
-        .model-info { padding: 15px; text-align: center; }
-        .model-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 10px; }
-        .model-select-btn {
-            background: transparent; border: 1px solid #444; color: #ccc;
-            padding: 6px 15px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase;
-            transition: all 0.3s;
-        }
-        .model-card:hover .model-select-btn { background: #0078d4; border-color: #0078d4; color: #fff; }
-
-        /* Выбор бюджета (Шаг 2) */
-        .budget-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; max-width: 800px; margin: 0 auto; }
-        .budget-option {
-            background: #1a1a1a; border: 2px solid #2a2a2a; border-radius: 12px; padding: 30px 20px;
-            text-align: center; cursor: pointer; transition: all 0.3s ease;
-        }
-        .budget-option:hover { border-color: #0078d4; background: #1f1f1f; transform: translateY(-3px); }
-        .budget-icon { font-size: 30px; color: #0078d4; margin-bottom: 15px; }
-        .budget-text { font-size: 18px; font-weight: 700; color: #fff; }
-
-        /* Форма контактов (Шаг 3) */
-        .contact-form { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
-        .form-group { display: flex; flex-direction: column; gap: 8px; text-align: left; }
-        .form-group label { font-size: 13px; color: #aaa; text-transform: uppercase; font-weight: 600; letter-spacing: 1px; }
-        .form-group input {
-            background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 15px 20px;
-            border-radius: 8px; font-size: 16px; outline: none; transition: border-color 0.3s;
-        }
-        .form-group input:focus { border-color: #0078d4; }
-        .submit-btn {
-            background: #0078d4; color: #fff; border: none; padding: 18px; border-radius: 8px;
-            font-size: 16px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
-            cursor: pointer; transition: all 0.3s ease; margin-top: 10px;
-        }
-        .submit-btn:hover { background: #005a9e; transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,120,212,0.3); }
-
-        /* Успешный финал (Шаг 4) */
-        .success-box { text-align: center; padding: 50px 0; }
-        .success-icon { font-size: 80px; color: #4ade80; margin-bottom: 20px; animation: scaleIn 0.5s cubic-bezier(0.2, 0.8, 0.2, 1); }
-        .success-text { font-size: 16px; color: #aaa; max-width: 400px; margin: 0 auto; line-height: 1.6; }
-        @keyframes scaleIn { 0% { transform: scale(0); } 100% { transform: scale(1); } }
-
-        /* --- Общие Модальные Окна (Инфо / Юр) --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 9999; display: flex; justify-content: center; align-items: center; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; }
-        .modal-overlay.active { opacity: 1; pointer-events: all; }
-        .modal-box { background: #111; border: 1px solid #333; border-top: 4px solid #0078d4; border-radius: 12px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; padding: 40px; position: relative; transform: translateY(50px) scale(0.95); transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 25px 50px rgba(0,0,0,0.7); }
-        .modal-overlay.active .modal-box { transform: translateY(0) scale(1); }
-        .modal-close { position: absolute; top: 20px; right: 20px; font-size: 24px; color: #888; cursor: pointer; transition: color 0.3s; background: none; border: none; }
-        .modal-close:hover { color: #fff; }
-        
-        .m-header { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 20px; }
-        .m-icon { width: 60px; height: 60px; background: rgba(0,120,212,0.1); border: 1px solid rgba(0,120,212,0.3); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; color: #0078d4; }
-        .m-title { font-size: 22px; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 1px; }
-        .m-text { font-size: 15px; color: #bbb; line-height: 1.6; margin-bottom: 20px; }
-        .m-list { list-style: none; }
-        .m-list li { position: relative; padding-left: 30px; margin-bottom: 15px; font-size: 14px; color: #aaa; line-height: 1.5; }
-        .m-list li i { position: absolute; left: 0; top: 4px; color: #0078d4; font-size: 14px; }
-        .m-list li strong { color: #fff; font-weight: 600; display: block; margin-bottom: 2px; }
-
-        .legal-content h3 { color: #fff; margin-top: 20px; margin-bottom: 10px; font-size: 18px; }
-        .legal-content p { color: #999; font-size: 13px; margin-bottom: 10px; }
-
-        /* --- Footer (Реквизиты) --- */
-        footer { background: #050505; padding: 60px 50px 30px 50px; border-top: 1px solid #1a1a1a; font-size: 13px; color: #888; }
+        /* --- Footer --- */
+        footer { background: #050505; padding: 60px 50px 30px 50px; border-top: 1px solid #1a1a1a; font-size: 13px; color: #888; width: 100%; }
         .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 40px; max-width: 1400px; margin: 0 auto; margin-bottom: 40px; }
         .footer-col h4 { color: #fff; font-size: 16px; margin-bottom: 20px; text-transform: uppercase; letter-spacing: 1px; }
         .footer-col p { margin-bottom: 8px; }
@@ -429,38 +183,127 @@
         .footer-links a:hover { color: #0078d4; text-decoration: underline; }
         .footer-bottom { text-align: center; padding-top: 30px; border-top: 1px solid #111; font-size: 12px; }
 
-        /* --- Cookie Banner --- */
-        .cookie-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(150%); width: 90%; max-width: 700px; background: #111; border: 1px solid #333; border-radius: 8px; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; gap: 20px; z-index: 9998; box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: transform 0.6s cubic-bezier(0.2, 0.8, 0.2, 1); }
+        /* --- Модалки и Квиз --- */
+        .modal-overlay, .quiz-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); backdrop-filter: blur(10px); z-index: 10000; display: flex; justify-content: center; align-items: flex-start; overflow-y: auto; opacity: 0; pointer-events: none; transition: opacity 0.4s ease; padding: 40px 20px; }
+        .modal-overlay.active, .quiz-overlay.active { opacity: 1; pointer-events: all; }
+        .modal-box, .quiz-container { background: #111; border: 1px solid #333; border-top: 4px solid #0078d4; border-radius: 12px; width: 100%; max-width: 1100px; padding: 40px; position: relative; transform: translateY(30px); transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1); box-shadow: 0 30px 60px rgba(0,0,0,0.8); margin: auto; }
+        .modal-box { max-width: 600px; }
+        .modal-overlay.active .modal-box, .quiz-overlay.active .quiz-container { transform: translateY(0); }
+        .modal-close, .quiz-close { position: absolute; top: 20px; right: 20px; font-size: 28px; color: #888; cursor: pointer; background: none; border: none; z-index: 10; padding: 5px; }
+        
+        .quiz-step { display: none; animation: fadeIn 0.5s ease; }
+        .quiz-step.active-step { display: block; }
+        .quiz-header { text-align: center; margin-bottom: 40px; }
+        .quiz-title { font-size: 28px; font-weight: 800; text-transform: uppercase; letter-spacing: 1px; color: #fff; margin-bottom: 10px; }
+        .models-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 20px; }
+        .model-card { background: #1a1a1a; border: 1px solid #2a2a2a; border-radius: 8px; overflow: hidden; cursor: pointer; position: relative; }
+        .model-img-box { width: 100%; height: 140px; background: #0a0a0a; overflow: hidden; }
+        .model-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .model-info { padding: 15px; text-align: center; }
+        .model-name { font-size: 16px; font-weight: 700; color: #fff; margin-bottom: 10px; }
+        .model-select-btn { background: transparent; border: 1px solid #444; color: #ccc; padding: 6px 15px; border-radius: 20px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
+        .budget-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; max-width: 800px; margin: 0 auto; }
+        .budget-option { background: #1a1a1a; border: 2px solid #2a2a2a; border-radius: 12px; padding: 30px 20px; text-align: center; cursor: pointer; }
+        .contact-form { max-width: 500px; margin: 0 auto; display: flex; flex-direction: column; gap: 20px; }
+        .form-group input { background: #1a1a1a; border: 1px solid #333; color: #fff; padding: 15px 20px; border-radius: 8px; font-size: 16px; width: 100%; outline: none; }
+        .submit-btn { background: #0078d4; color: #fff; border: none; padding: 18px; border-radius: 8px; font-size: 16px; font-weight: 700; cursor: pointer; width: 100%; }
+        
+        .m-header { display: flex; align-items: center; gap: 20px; margin-bottom: 25px; border-bottom: 1px solid #222; padding-bottom: 20px; }
+        .m-icon { width: 60px; height: 60px; background: rgba(0,120,212,0.1); border: 1px solid rgba(0,120,212,0.3); border-radius: 50%; display: flex; justify-content: center; align-items: center; font-size: 24px; color: #0078d4; flex-shrink: 0; }
+        .m-title { font-size: 20px; font-weight: 700; color: #fff; text-transform: uppercase; }
+        .m-list li { padding-left: 30px; margin-bottom: 15px; font-size: 14px; color: #aaa; position: relative; }
+        .m-list li i { position: absolute; left: 0; top: 4px; color: #0078d4; }
+
+        /* Cookie Banner */
+        .cookie-banner { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%) translateY(150%); width: 90%; max-width: 700px; background: #111; border: 1px solid #333; border-radius: 8px; padding: 20px 30px; display: flex; justify-content: space-between; align-items: center; gap: 20px; z-index: 9998; box-shadow: 0 10px 30px rgba(0,0,0,0.8); transition: transform 0.6s ease; }
         .cookie-banner.show { transform: translateX(-50%) translateY(0); }
-        .cookie-text { font-size: 13px; color: #aaa; line-height: 1.5; }
-        .cookie-text a { color: #0078d4; text-decoration: none; }
-        .cookie-btn { background: #0078d4; color: #fff; border: none; padding: 10px 25px; border-radius: 4px; font-weight: 600; font-size: 13px; cursor: pointer; transition: background 0.3s; white-space: nowrap; }
-        .cookie-btn:hover { background: #005a9e; }
+        .cookie-btn { background: #0078d4; color: #fff; border: none; padding: 10px 25px; border-radius: 4px; font-weight: 600; font-size: 13px; cursor: pointer; white-space: nowrap; }
 
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
+        /* ==========================================================================
+           МОБИЛЬНАЯ АДАПТАЦИЯ (ПЕРЕПИСАНО С НУЛЯ ДЛЯ ИДЕАЛЬНОЙ РАБОТЫ НА ТЕЛЕФОНАХ)
+           ========================================================================== */
         @media (max-width: 900px) {
-            .hero-content h1 { font-size: 36px; }
-            .catalog-container.active-catalog { flex-direction: column; height: auto; }
-            .brand-panel { height: 250px; flex: none !important; }
-            .brand-panel:hover { height: 300px; }
-            nav { padding: 20px; flex-direction: column; gap: 10px; }
-            .sound-toggle { bottom: 20px; left: 20px; width: 40px; height: 40px; font-size: 14px; }
-            .cookie-banner { flex-direction: column; text-align: center; }
-            .team-grid { flex-direction: column; align-items: center; }
-            .team-card { width: 100%; max-width: 350px; }
-            .faq-main-btn { padding: 15px 30px; font-size: 16px; width: 100%; }
-            .faq-answer-text { padding: 0 20px 20px 20px; gap: 12px; } /* Адаптив для ответов FAQ */
-            .faq-answer-decor { margin-top: 2px; font-size: 16px; }
-            .faq-answer-text p { font-size: 14px; }
-            .faq-q-left { gap: 15px; }
+            /* Шапка и Навигация */
+            nav { padding: 20px; flex-direction: column; gap: 10px; text-align: center; }
+            .hero-content { padding: 0 20px 80px 20px; text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; }
+            .hero-content h1 { font-size: 32px; margin-bottom: 15px; }
+            .hero-content p { font-size: 15px; margin-bottom: 30px; padding: 0 10px; }
+            
+            /* Кнопки в главном блоке */
+            .cta-buttons { flex-direction: column; width: 100%; max-width: 400px; gap: 15px; }
+            .btn { width: 100%; padding: 18px 20px; font-size: 14px; }
+            
+            /* Кнопка звука */
+            .sound-toggle { bottom: 20px; right: 20px; width: 45px; height: 45px; }
+
+            /* Секции - Отступы */
+            .selection-section, .advantages-section, .process-section, .team-section, .faq-section { padding: 60px 20px; }
+            .section-title { font-size: 28px; }
+            .section-subtitle { font-size: 14px; margin-bottom: 30px; }
+
+            /* Флаги (Выбор страны) */
+            .flags-container { gap: 10px; margin-bottom: 40px; }
+            .flag-wrapper { width: calc(33.33% - 10px); min-width: auto; }
+            .flag-card { border-width: 1px; border-radius: 4px; }
+            .flag-label { font-size: 11px; margin-top: 10px; letter-spacing: 0; }
+
+            /* Каталог авто (ГЛАВНОЕ ИСПРАВЛЕНИЕ: Отказ от hover) */
+            .catalog-container { height: auto; display: none; background: transparent; box-shadow: none; border-radius: 0; }
+            .catalog-container.active-catalog { display: flex; flex-direction: column; gap: 20px; }
+            .brand-panel { flex: none !important; height: 320px; border-radius: 12px; border: 1px solid #333; padding: 25px; }
+            /* На мобильных делаем текст и кнопку всегда видимыми! */
+            .brand-bg { filter: brightness(0.4) !important; transform: none !important; }
+            .brand-description { max-height: 300px; opacity: 1; transform: translateY(0); color: rgba(255,255,255,0.9); margin-bottom: 20px; font-size: 14px; }
+            .brand-btn { opacity: 1; transform: translateY(0); padding: 15px 30px; font-size: 13px; width: 100%; text-align: center; margin-top: auto; }
+
+            /* Этапы работы */
+            .process-grid { grid-template-columns: 1fr; gap: 20px; }
+            .process-step { padding: 30px 20px 30px 70px; min-height: auto; }
+            .step-number { left: 15px; top: 25px; font-size: 35px; }
+            .btn-more-step { padding: 10px 20px; width: 100%; justify-content: center; margin-top: 15px; }
+
+            /* Команда */
+            .team-grid { flex-direction: column; gap: 30px; }
+            .team-card { width: 100%; max-width: 100%; }
+
+            /* FAQ */
+            .faq-main-btn { padding: 18px 20px; font-size: 16px; width: 100%; }
+            .faq-question { padding: 20px 15px; font-size: 14px; }
+            .faq-q-left { gap: 12px; }
+            .faq-item-icon { width: 35px; height: 35px; font-size: 14px; }
+            .faq-answer-text { padding: 0 15px 20px 60px; font-size: 13px; gap: 10px; }
+            .faq-answer-decor { margin-top: 2px; font-size: 14px; }
+            .faq-item.active { transform: scale(1); } /* Отключаем вылет карточки, чтобы не сдвигать экран */
+
+            /* Квиз и Модалки */
+            .quiz-overlay, .modal-overlay { padding: 20px 10px; }
+            .quiz-container, .modal-box { padding: 30px 20px; }
+            .quiz-title { font-size: 22px; }
+            .models-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; } /* В 2 колонки на телефоне */
+            .budget-grid { grid-template-columns: 1fr; }
+            .budget-option { padding: 20px; }
+
+            /* Футер */
+            footer { padding: 40px 20px 20px 20px; text-align: center; }
+            .footer-links { align-items: center; }
+            .cookie-banner { flex-direction: column; text-align: center; gap: 15px; padding: 20px; }
+            .cookie-btn { width: 100%; }
+        }
+
+        /* Ультра-маленькие экраны */
+        @media (max-width: 400px) {
+            .models-grid { grid-template-columns: 1fr; } /* В 1 колонку, если совсем узко */
+            .hero-content h1 { font-size: 28px; }
+            .brand-name { font-size: 32px; }
         }
     </style>
 </head>
 <body>
 
     <header>
-        <!-- Заменили картинку на видео -->
+        <!-- ФОНОВОЕ ВИДЕО: Включен автоплей, цикл, без звука (чтобы работало на мобилках) -->
         <video class="hero-background" id="heroVideo" autoplay loop muted playsinline poster="main.jpeg">
             <source src="company.mp4" type="video/mp4">
         </video>
@@ -479,8 +322,8 @@
             </div>
         </div>
         
-        <!-- Кнопка включения звука -->
-        <button class="sound-toggle reveal" style="transition-delay: 0.5s;" onclick="toggleSound()" id="soundToggleBtn" title="Включить звук">
+        <!-- КНОПКА ЗВУКА -->
+        <button class="sound-toggle reveal" style="transition-delay: 0.5s;" onclick="toggleSound()" id="soundToggleBtn" title="Включить звук видео">
             <i class="fa-solid fa-volume-xmark"></i>
         </button>
     </header>
@@ -488,6 +331,7 @@
     <section class="selection-section reveal" id="catalog">
         <h2 class="section-title">Каталог автомобилей</h2>
         <p class="section-subtitle">Выберите страну, чтобы открыть флагманы для импорта</p>
+        
         <div class="flags-container">
             <div class="flag-wrapper active" onclick="switchCountry('japan', this)">
                 <div class="flag-card active"><img src="japan.jpg" alt="Япония" onerror="this.src='https://placehold.co/160x100/111/fff?text=JP'"></div>
@@ -714,7 +558,6 @@
         </div>
     </section>
 
-    <!-- Новая секция FAQ (со скрытой кнопкой) -->
     <section class="faq-section" id="faqSection">
         
         <button class="faq-main-btn reveal" id="faqToggleBtn" onclick="toggleFaqList()">
@@ -878,7 +721,6 @@
         </div>
     </section>
 
-    <!-- Подвал с реквизитами -->
     <footer>
         <div class="footer-grid">
             <div class="footer-col reveal">
@@ -926,7 +768,7 @@
         <button class="cookie-btn" onclick="acceptCookies()">Принять и закрыть</button>
     </div>
 
-    <!-- Общее Модальное Окно (Инфо) -->
+    <!-- Модальное Окно (Инфо) -->
     <div class="modal-overlay" id="mainModal" onclick="closeModal(event)">
         <div class="modal-box">
             <button class="modal-close" onclick="forceCloseModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -945,75 +787,51 @@
         </div>
     </div>
 
-    <!-- НОВЫЙ БЛОК: КВИЗ-ВОРОНКА (Выбор авто -> Бюджет -> Контакты) -->
+    <!-- КВИЗ-ВОРОНКА -->
     <div class="quiz-overlay" id="quizOverlay" onclick="closeQuizOverlay(event)">
         <div class="quiz-container" id="quizContainer">
             <button class="quiz-close" onclick="closeQuiz()"><i class="fa-solid fa-xmark"></i></button>
             
-            <!-- Шаг 1: Выбор модели (Рендерится через JS) -->
             <div class="quiz-step active-step" id="quizStep1">
                 <div class="quiz-header">
                     <div class="quiz-title" id="quizBrandTitle">Выберите модель</div>
                     <div class="quiz-subtitle">Топ-10 самых популярных автомобилей для импорта</div>
                 </div>
-                <div class="models-grid" id="modelsGridContainer">
-                    <!-- Карточки вставляются скриптом -->
-                </div>
+                <div class="models-grid" id="modelsGridContainer"></div>
             </div>
 
-            <!-- Шаг 2: Выбор бюджета -->
             <div class="quiz-step" id="quizStep2">
                 <div class="quiz-header">
                     <div class="quiz-title">Ваш бюджет под ключ?</div>
                     <div class="quiz-subtitle">Укажите комфортную сумму для покупки <strong id="selectedModelName" style="color:#0078d4;"></strong></div>
                 </div>
                 <div class="budget-grid">
-                    <div class="budget-option" onclick="goToStep3('До 2 млн руб.')">
-                        <div class="budget-icon"><i class="fa-solid fa-coins"></i></div>
-                        <div class="budget-text">До 2 млн руб.</div>
-                    </div>
-                    <div class="budget-option" onclick="goToStep3('2 - 3 млн руб.')">
-                        <div class="budget-icon"><i class="fa-solid fa-wallet"></i></div>
-                        <div class="budget-text">2 - 3 млн руб.</div>
-                    </div>
-                    <div class="budget-option" onclick="goToStep3('3 - 5 млн руб.')">
-                        <div class="budget-icon"><i class="fa-solid fa-sack-dollar"></i></div>
-                        <div class="budget-text">3 - 5 млн руб.</div>
-                    </div>
-                    <div class="budget-option" onclick="goToStep3('От 5 млн руб.')">
-                        <div class="budget-icon"><i class="fa-solid fa-gem"></i></div>
-                        <div class="budget-text">От 5 млн руб.</div>
-                    </div>
+                    <div class="budget-option" onclick="goToStep3('До 2 млн руб.')"><div class="budget-icon"><i class="fa-solid fa-coins"></i></div><div class="budget-text">До 2 млн руб.</div></div>
+                    <div class="budget-option" onclick="goToStep3('2 - 3 млн руб.')"><div class="budget-icon"><i class="fa-solid fa-wallet"></i></div><div class="budget-text">2 - 3 млн руб.</div></div>
+                    <div class="budget-option" onclick="goToStep3('3 - 5 млн руб.')"><div class="budget-icon"><i class="fa-solid fa-sack-dollar"></i></div><div class="budget-text">3 - 5 млн руб.</div></div>
+                    <div class="budget-option" onclick="goToStep3('От 5 млн руб.')"><div class="budget-icon"><i class="fa-solid fa-gem"></i></div><div class="budget-text">От 5 млн руб.</div></div>
                 </div>
             </div>
 
-            <!-- Шаг 3: Сбор контактов -->
             <div class="quiz-step" id="quizStep3">
                 <div class="quiz-header">
                     <div class="quiz-title">Последний шаг</div>
                     <div class="quiz-subtitle">Оставьте контакты, чтобы мы рассчитали точную стоимость и прислали варианты.</div>
                 </div>
                 <form class="contact-form" onsubmit="submitQuiz(event)">
-                    <div class="form-group">
-                        <label>Как к вам обращаться?</label>
-                        <input type="text" placeholder="Иван Иванов" required>
-                    </div>
-                    <div class="form-group">
-                        <label>Номер телефона (WhatsApp / Telegram)</label>
-                        <input type="tel" placeholder="+7 (999) 000-00-00" required>
-                    </div>
+                    <div class="form-group"><input type="text" placeholder="Ваше Имя" required></div>
+                    <div class="form-group"><input type="tel" placeholder="Номер телефона (WhatsApp / Telegram)" required></div>
                     <button type="submit" class="submit-btn">Получить расчет <i class="fa-solid fa-paper-plane" style="margin-left:8px;"></i></button>
                     <p style="font-size: 11px; color: #666; text-align: center; margin-top: 10px;">Нажимая кнопку, вы соглашаетесь с обработкой персональных данных</p>
                 </form>
             </div>
 
-            <!-- Шаг 4: Финал -->
             <div class="quiz-step" id="quizStep4">
-                <div class="success-box">
-                    <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
-                    <div class="quiz-title">Заявка успешно принята!</div>
-                    <div class="success-text">Наш эксперт уже получил ваши пожелания и скоро свяжется с вами для предоставления лучших вариантов с аукционов.</div>
-                    <button class="btn btn-primary" style="margin-top: 30px;" onclick="closeQuiz()">Вернуться на сайт</button>
+                <div class="quiz-header" style="margin-bottom: 0;">
+                    <div class="budget-icon" style="font-size: 60px; color: #4ade80;"><i class="fa-solid fa-circle-check"></i></div>
+                    <div class="quiz-title">Заявка принята!</div>
+                    <p style="color: #aaa; margin-top: 15px;">Наш эксперт уже получил ваши пожелания и скоро свяжется с вами.</p>
+                    <button class="btn btn-primary" style="margin-top: 30px; width: 100%;" onclick="closeQuiz()">Вернуться на сайт</button>
                 </div>
             </div>
 
@@ -1116,14 +934,11 @@
             document.getElementById('quizBrandTitle').innerText = `Выберите модель ${data.name}`;
             
             const grid = document.getElementById('modelsGridContainer');
-            grid.innerHTML = ''; // Очищаем старые
+            grid.innerHTML = ''; 
 
-            // Генерируем 10 карточек с фото-заглушками
             data.models.forEach(modelName => {
-                // Создаем красивую ссылку на заглушку (если нет реальной фотки)
                 const safeName = encodeURIComponent(modelName);
                 const placeholderUrl = `https://placehold.co/400x250/1a1a1a/0078d4?text=${safeName}`;
-                // Пытаемся загрузить реальное фото из папки (напр: toyota_camry.jpg), если нет - грузим заглушку
                 const realImagePath = `${brandId}_${modelName.toLowerCase().replace(/ /g, '_')}.jpg`;
 
                 const cardHTML = `
@@ -1162,8 +977,7 @@
         }
 
         function submitQuiz(event) {
-            event.preventDefault(); // Останавливаем перезагрузку
-            // Здесь в будущем будет отправка данных (fetch/AJAX) на сервер или в Telegram
+            event.preventDefault(); 
             console.log("Данные заявки:", currentQuizData);
             switchQuizStep(4);
         }
@@ -1174,12 +988,11 @@
 
         function closeQuiz() {
             document.getElementById('quizOverlay').classList.remove('active');
-            document.body.style.overflow = 'auto';
-            // Сбрасываем квиз через полсекунды (чтобы не было видно во время анимации закрытия)
+            document.body.style.overflow = '';
             setTimeout(() => switchQuizStep(1), 500); 
         }
 
-        // Логика Модального окна (юр.инфа и этапы)
+        // Логика Модального окна
         const modalOverlay = document.getElementById('mainModal');
         const stepContainer = document.getElementById('step-content-container');
         const legalContainer = document.getElementById('legal-content-container');
@@ -1216,7 +1029,7 @@
 
         function showModal() { modalOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
         function closeModal(event) { if (event.target === modalOverlay) forceCloseModal(); }
-        function forceCloseModal() { modalOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
+        function forceCloseModal() { modalOverlay.classList.remove('active'); document.body.style.overflow = ''; }
 
         // Куки баннер
         document.addEventListener("DOMContentLoaded", () => {
