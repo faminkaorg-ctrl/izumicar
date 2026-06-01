@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>IZUME CAR | Премиальный импорт автомобилей</title>
+    <title>IZUMI CAR | Премиальный импорт автомобилей</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         /* --- Базовые настройки и скрытие скроллбара --- */
@@ -445,17 +445,52 @@
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
         /* ==========================================================================
-           АБСОЛЮТНО БЕЗОПАСНАЯ МОБИЛЬНАЯ АДАПТАЦИЯ
+           АБСОЛЮТНО БЕЗОПАСНАЯ МОБИЛЬНАЯ АДАПТАЦИЯ (ИСПРАВЛЕНО ВИДЕО)
            ========================================================================== */
         @media (max-width: 900px) {
             /* Шапка */
-            nav { padding: 20px; flex-direction: column; gap: 10px; }
-            .hero-content { padding: 0 20px 50px 20px; text-align: center; }
-            .hero-content h1 { font-size: 32px; }
-            .hero-content p { font-size: 16px; }
-            .cta-buttons { flex-direction: column; gap: 15px; }
-            .btn { width: 100%; text-align: center; }
-            .sound-toggle { bottom: 20px; left: 20px; width: 45px; height: 45px; font-size: 14px; }
+            header {
+                height: 100vh;
+                height: 100dvh; /* Фикс прыгающей адресной строки на iOS/Android */
+                justify-content: flex-start;
+                background-color: #0a0a0a;
+            }
+            .hero-background {
+                height: 60vh; /* Видео теперь занимает только верхние 60%, не обрезая бока */
+                object-fit: cover;
+                object-position: center;
+            }
+            .video-overlay {
+                height: 61vh; /* Плавно уходит в черный цвет снизу */
+                background: linear-gradient(180deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.1) 60%, #0a0a0a 100%);
+            }
+            nav { padding: 20px; flex-direction: column; gap: 5px; z-index: 10; position: relative; }
+            .logo { font-size: 24px; }
+            .owners { font-size: 12px; }
+            
+            .hero-content { 
+                padding: 0 20px 40px 20px; 
+                text-align: center; 
+                margin-top: auto; /* Смещаем контент вниз под видео */
+                position: relative;
+                z-index: 10;
+            }
+            .hero-content h1 { font-size: 30px; margin-bottom: 12px; }
+            .hero-content p { font-size: 15px; margin-bottom: 25px; }
+            
+            .cta-buttons { flex-direction: column; gap: 12px; }
+            .btn { width: 100%; text-align: center; padding: 15px; }
+            
+            .sound-toggle { 
+                top: calc(60vh - 65px); /* Кнопка аккуратно перенесена в правый нижний угол видео */
+                right: 20px; 
+                left: auto; 
+                bottom: auto; 
+                width: 45px; 
+                height: 45px; 
+                font-size: 14px; 
+                z-index: 50;
+            }
             
             /* Общие отступы секций - уменьшаем, чтобы ничего не вылезало */
             .selection-section, .advantages-section, .process-section, .team-section, .faq-section { padding: 50px 20px; }
@@ -510,14 +545,13 @@
 <body>
 
     <header>
-        <!-- Полностью исправленный видео-блок -->
         <video class="hero-background" id="heroVideo" autoplay loop muted playsinline poster="main.jpeg">
             <source src="company.mp4" type="video/mp4">
         </video>
         <div class="video-overlay"></div>
         
         <nav>
-            <div class="logo reveal">IZUME CAR</div>
+            <div class="logo reveal">IZUMI CAR</div>
             <div class="owners reveal" style="transition-delay: 0.1s;">Основатели: Михаил & Татьяна</div>
         </nav>
         <div class="hero-content">
@@ -529,7 +563,6 @@
             </div>
         </div>
         
-        <!-- Кнопка включения звука -->
         <button class="sound-toggle reveal" style="transition-delay: 0.5s;" onclick="toggleSound()" id="soundToggleBtn" title="Включить звук">
             <i class="fa-solid fa-volume-xmark"></i>
         </button>
@@ -764,7 +797,6 @@
         </div>
     </section>
 
-    <!-- Новая секция FAQ (со скрытой кнопкой) -->
     <section class="faq-section" id="faqSection">
         
         <button class="faq-main-btn reveal" id="faqToggleBtn" onclick="toggleFaqList()">
@@ -928,11 +960,10 @@
         </div>
     </section>
 
-    <!-- Подвал с реквизитами -->
     <footer>
         <div class="footer-grid">
             <div class="footer-col reveal">
-                <div class="logo" style="font-size: 20px; margin-bottom: 15px;">IZUME CAR</div>
+                <div class="logo" style="font-size: 20px; margin-bottom: 15px;">IZUMI CAR</div>
                 <p>Эксклюзивный импорт автомобилей из Южной Кореи, Японии и Китая. Полный цикл логистики и юридического оформления.</p>
                 <p style="margin-top: 15px;"><strong>Ежедневно с 9:00 до 20:00</strong></p>
             </div>
@@ -964,11 +995,10 @@
             </div>
         </div>
         <div class="footer-bottom reveal" style="transition-delay: 0.4s;">
-            © 2026 IZUME CAR. Все права защищены. Информация на сайте не является публичной офертой.
+            © 2026 IZUMI CAR. Все права защищены. Информация на сайте не является публичной офертой.
         </div>
     </footer>
 
-    <!-- Cookie Banner -->
     <div class="cookie-banner" id="cookieBanner">
         <div class="cookie-text">
             Мы используем файлы cookie для персонализации контента и улучшения пользовательского опыта. Продолжая использовать сайт, вы соглашаетесь с нашей <a href="#" onclick="openLegalModal('privacy')">Политикой конфиденциальности</a>.
@@ -976,7 +1006,6 @@
         <button class="cookie-btn" onclick="acceptCookies()">Принять и закрыть</button>
     </div>
 
-    <!-- Общее Модальное Окно (Инфо) -->
     <div class="modal-overlay" id="mainModal" onclick="closeModal(event)">
         <div class="modal-box">
             <button class="modal-close" onclick="forceCloseModal()"><i class="fa-solid fa-xmark"></i></button>
@@ -995,23 +1024,19 @@
         </div>
     </div>
 
-    <!-- НОВЫЙ БЛОК: КВИЗ-ВОРОНКА (Выбор авто -> Бюджет -> Контакты) -->
     <div class="quiz-overlay" id="quizOverlay" onclick="closeQuizOverlay(event)">
         <div class="quiz-container" id="quizContainer">
             <button class="quiz-close" onclick="closeQuiz()"><i class="fa-solid fa-xmark"></i></button>
             
-            <!-- Шаг 1: Выбор модели (Рендерится через JS) -->
             <div class="quiz-step active-step" id="quizStep1">
                 <div class="quiz-header">
                     <div class="quiz-title" id="quizBrandTitle">Выберите модель</div>
                     <div class="quiz-subtitle">Топ-10 самых популярных автомобилей для импорта</div>
                 </div>
                 <div class="models-grid" id="modelsGridContainer">
-                    <!-- Карточки вставляются скриптом -->
-                </div>
+                    </div>
             </div>
 
-            <!-- Шаг 2: Выбор бюджета -->
             <div class="quiz-step" id="quizStep2">
                 <div class="quiz-header">
                     <div class="quiz-title">Ваш бюджет под ключ?</div>
@@ -1037,7 +1062,6 @@
                 </div>
             </div>
 
-            <!-- Шаг 3: Сбор контактов -->
             <div class="quiz-step" id="quizStep3">
                 <div class="quiz-header">
                     <div class="quiz-title">Последний шаг</div>
@@ -1057,7 +1081,6 @@
                 </form>
             </div>
 
-            <!-- Шаг 4: Финал -->
             <div class="quiz-step" id="quizStep4">
                 <div class="success-box">
                     <div class="success-icon"><i class="fa-solid fa-circle-check"></i></div>
@@ -1226,7 +1249,7 @@
             document.getElementById('quizOverlay').classList.remove('active');
             document.body.style.overflow = 'auto';
             // Сбрасываем квиз через полсекунды (чтобы не было видно во время анимации закрытия)
-            setTimeout(() => switchQuizStep(1), 500); 
+            setTimeout(() => switchQuizStep(1), 500); 
         }
 
         // Логика Модального окна (юр.инфа и этапы)
