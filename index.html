@@ -25,9 +25,9 @@
         .reveal.active { opacity: 1; transform: translateY(0); }
 
         /* --- Шапка --- */
-        header { position: relative; width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; }
-        .hero-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -2; object-fit: cover; object-position: center; }
-        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.9) 100%); z-index: -1; }
+        header { position: relative; width: 100%; height: 100vh; display: flex; flex-direction: column; justify-content: space-between; overflow: hidden; background-color: #111; }
+        .hero-background { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; object-fit: cover; object-position: center; background-color: #1a1a1a; }
+        .video-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(180deg, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.2) 50%, rgba(0,0,0,0.9) 100%); z-index: 2; }
         
         /* --- Кнопка управления звуком видео --- */
         .sound-toggle {
@@ -56,10 +56,10 @@
             box-shadow: 0 0 15px rgba(0, 120, 212, 0.3);
         }
 
-        nav { display: flex; justify-content: space-between; align-items: center; padding: 30px 50px; z-index: 10; }
+        nav { display: flex; justify-content: space-between; align-items: center; padding: 30px 50px; position: relative; z-index: 10; }
         .logo { font-size: 26px; font-weight: 800; letter-spacing: 4px; text-transform: uppercase; }
         .owners { font-size: 14px; letter-spacing: 1px; color: rgba(255, 255, 255, 0.6); }
-        .hero-content { padding: 0 50px 100px 50px; max-width: 900px; z-index: 10; }
+        .hero-content { padding: 0 50px 100px 50px; max-width: 900px; position: relative; z-index: 10; }
         .hero-content h1 { font-size: 52px; font-weight: 300; margin-bottom: 20px; line-height: 1.1; text-transform: uppercase; letter-spacing: 1px; }
         .hero-content p { font-size: 18px; color: rgba(255, 255, 255, 0.85); margin-bottom: 40px; max-width: 700px; }
         
@@ -510,9 +510,10 @@
 <body>
 
     <header>
-        <!-- Заменили картинку на видео -->
-        <video class="hero-background" id="heroVideo" autoplay loop muted playsinline poster="main.jpeg">
+        <!-- Видео фон с подстраховкой (onerror) -->
+        <video class="hero-background" id="heroVideo" autoplay loop muted playsinline poster="main.jpeg" onerror="this.style.display='none'">
             <source src="company.mp4" type="video/mp4">
+            Ваш браузер не поддерживает видео.
         </video>
         <div class="video-overlay"></div>
         
