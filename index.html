@@ -12,11 +12,15 @@
         html, body { 
             background-color: #0a0a0a; 
             color: #ffffff; 
-            overflow-x: hidden; /* Жесткий запрет горизонтального скролла */
             width: 100%;
-            max-width: 100vw;
             line-height: 1.6;
             -ms-overflow-style: none; scrollbar-width: none; 
+        }
+        
+        body.modal-open {
+            position: fixed;
+            width: 100%;
+            overflow: hidden;
         }
         body::-webkit-scrollbar { display: none; }
 
@@ -1214,8 +1218,8 @@
             });
 
             switchQuizStep(1);
+            document.body.classList.add('modal-open');
             document.getElementById('quizOverlay').classList.add('active');
-            document.body.style.overflow = 'hidden';
         }
 
         function switchQuizStep(stepNumber) {
@@ -1246,8 +1250,8 @@
         }
 
         function closeQuiz() {
+            document.body.classList.remove('modal-open');
             document.getElementById('quizOverlay').classList.remove('active');
-            document.body.style.overflow = 'auto';
             // Сбрасываем квиз через полсекунды (чтобы не было видно во время анимации закрытия)
             setTimeout(() => switchQuizStep(1), 500); 
         }
@@ -1287,9 +1291,15 @@
             showModal();
         }
 
-        function showModal() { modalOverlay.classList.add('active'); document.body.style.overflow = 'hidden'; }
+        function showModal() { 
+            document.body.classList.add('modal-open');
+            modalOverlay.classList.add('active'); 
+        }
         function closeModal(event) { if (event.target === modalOverlay) forceCloseModal(); }
-        function forceCloseModal() { modalOverlay.classList.remove('active'); document.body.style.overflow = 'auto'; }
+        function forceCloseModal() { 
+            document.body.classList.remove('modal-open');
+            modalOverlay.classList.remove('active'); 
+        }
 
         // Куки баннер
         document.addEventListener("DOMContentLoaded", () => {
